@@ -15,18 +15,29 @@ public class GamePanel
    public TextMeshProUGUI starName;
    public Slider pointSlider;
    public TextMeshProUGUI starPoint;
+   public GameObject appleIDHolder;
    public TextMeshProUGUI appleID;
    public GameObject guestTryLogIn;
 
-   public void guestSetUp()
+   public void SetPlayerName(string name)
    {
-
+      userName.text = name + "'s Star";
    }
 
-   public void LoginAppleData()
+   public void SetUpAppleID(bool visibility, string id)
    {
-
+      appleIDHolder.SetActive(visibility);
+      if(appleIDHolder.activeSelf)
+      {
+         appleID.text = "Apple ID: " + id;
+      }
    }
+
+   public void SetTryLoginVisibility(bool visibility)
+   {
+      guestTryLogIn.SetActive(visibility);
+   }
+
 
 
 }
