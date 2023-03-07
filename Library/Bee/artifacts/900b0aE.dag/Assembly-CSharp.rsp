@@ -373,6 +373,7 @@
 "Assets/AppleSignInUnity/AppleAuthSample/MainMenu.cs"
 "Assets/Script/AppleSignIn/SignInManager.cs"
 "Assets/Script/GameplayHandler/GameplayHandler.cs"
+"Assets/Script/Other/LoadSpriteManager.cs"
 "Assets/Script/Other/RandomGenerator.cs"
 "Assets/Script/PageHandler/GamePanel.cs"
 "Assets/Script/PageHandler/SignInPanel.cs"

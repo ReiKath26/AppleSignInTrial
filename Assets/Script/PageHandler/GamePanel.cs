@@ -11,7 +11,7 @@ using TMPro;
 public class GamePanel
 {
    public TextMeshProUGUI userName;
-   public Button star;
+   public GameObject starButton;
    public TextMeshProUGUI starName;
    public Slider pointSlider;
    public TextMeshProUGUI starPoint;
@@ -33,9 +33,15 @@ public class GamePanel
       }
    }
 
-   public void SetTryLoginVisibility(bool visibility)
+   public void SetStar(Star star)
    {
-      guestTryLogIn.SetActive(visibility);
+      starName.text = star.name;
+      starButton.GetComponent<LoadSpriteManager>().loadNewSprite(star.sprite);
+   }
+
+   public void SetAppleLoginAvailability(bool available)
+   {
+      guestTryLogIn.SetActive(available);
    }
 
 
