@@ -17,6 +17,8 @@ public class GamePanel
    public TextMeshProUGUI starPoint;
    public GameObject appleIDHolder;
    public TextMeshProUGUI appleID;
+     public GameObject emailHolder;
+   public TextMeshProUGUI emailText;
    public GameObject guestTryLogIn;
 
    public void SetPlayerName(string name)
@@ -30,6 +32,15 @@ public class GamePanel
       if(appleIDHolder.activeSelf)
       {
          appleID.text = "Apple ID: " + id;
+      }
+   }
+
+   public void SetEmail(bool visibility, string email)
+   {
+      emailHolder.SetActive(visibility);
+      if(emailHolder.activeSelf)
+      {
+         emailText.text = "Email: " + email;
       }
    }
 

@@ -13,6 +13,8 @@ public class GameplayHandler : MonoBehaviour
     private const string AppleUserIdKey = "1dCu55en74ppl3";
     private const string UserNameKey = "u53rm4n3";
     private const string UserTotalPoint = "U53rp0";
+     private const string EmailKey = "3n4l1";
+
     private IAppleAuthManager _authManager;
 
     public GamePanel game_panel;
@@ -206,6 +208,7 @@ public class GameplayHandler : MonoBehaviour
 
             game_panel.SetPlayerName("Guest");
             game_panel.SetUpAppleID(false, string.Empty);
+            game_panel.SetEmail(false, string.Empty);
             return;
 
             case false:
@@ -250,6 +253,16 @@ public class GameplayHandler : MonoBehaviour
             else
             {
                 game_panel.SetPlayerName("User");
+            }
+
+            if(PlayerPrefs.HasKey(EmailKey))
+            {
+                game_panel.SetEmail(true, PlayerPrefs.GetString(EmailKey));
+            }
+
+            else
+            {
+                game_panel.SetEmail(true, "Undisclosed in quick login attempt");
             }
 
             game_panel.SetUpAppleID(true, PlayerPrefs.GetString(AppleUserIdKey));

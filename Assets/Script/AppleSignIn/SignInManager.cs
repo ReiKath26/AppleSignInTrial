@@ -12,6 +12,7 @@ public class SignInManager : MonoBehaviour
 {
     private const string AppleUserIdKey = "1dCu55en74ppl3";
     private const string UserNameKey = "u53rm4n3";
+    private const string EmailKey = "3n4l1";
 
     private IAppleAuthManager _authManager;
 
@@ -150,8 +151,6 @@ public class SignInManager : MonoBehaviour
                 if(appleCredential != null)
                 {
                     PlayerPrefs.SetString(AppleUserIdKey, credential.User);
-                    PlayerPrefs.SetString(UserNameKey, "User");
-
                 }
 
                 SceneManager.LoadScene(1);
@@ -166,7 +165,7 @@ public class SignInManager : MonoBehaviour
 
     private void AppleSignIn()
     {
-         var loginArgs = new AppleAuthLoginArgs(LoginOptions.IncludeFullName);
+         var loginArgs = new AppleAuthLoginArgs(LoginOptions.IncludeEmail | LoginOptions.IncludeFullName);
         
             _authManager.LoginWithAppleId(
             loginArgs,
@@ -184,10 +183,11 @@ public class SignInManager : MonoBehaviour
                         PlayerPrefs.SetString(UserNameKey, name);
                     }
 
-                    else
+                    if(appleCredential.Email != null)
                     {
-                        PlayerPrefs.SetString(UserNameKey, "User");
+                        PlayerPrefs.SetString(EmailKey, appleCredential.Email);
                     }
+
                 }
 
                 SceneManager.LoadScene(1);
