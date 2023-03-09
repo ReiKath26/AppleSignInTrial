@@ -7,20 +7,6 @@ using AppleAuth.Extensions;
 using AppleAuth.Interfaces;
 using AppleAuth.Native;
 
-public class Star
-{
-    public string name;
-    public int neededPoint;
-    public string sprite;
-
-    public Star(string name, int neededPoint, string sprite)
-    {
-        this.name = name;
-        this.neededPoint = neededPoint;
-        this.sprite = sprite;
-    }
-}
-
 public class GameplayHandler : MonoBehaviour
 {
   
@@ -35,6 +21,12 @@ public class GameplayHandler : MonoBehaviour
 
     private Star[] availableStars;
 
+    private bool isGuest = true;
+    private bool canAdd = true;
+
+    [SerializeField] private GameObject pointText;
+    [SerializeField] private GameObject touchPoint;
+
    private void Start()
    {
         availableStars = new Star[]{
@@ -45,7 +37,8 @@ public class GameplayHandler : MonoBehaviour
 
         if(PlayerPrefs.HasKey(AppleUserIdKey))
         {
-           SetUpGamePage(false);
+           isGuest = false;
+           SetUpGamePage();
         }
 
         else
@@ -56,15 +49,19 @@ public class GameplayHandler : MonoBehaviour
                 _authManager = new AppleAuthManager(deserialize);
             }
 
-            SetUpGamePage(true);
+            isGuest = true;
+            SetUpGamePage();
         }
    }
 
    private void Update()
    {
-        game_panel.pointSlider.value = (float)point/(float) availableStars[index].neededPoint;
-        Debug.Log((float) (point/availableStars[index].neededPoint));
-        game_panel.starPoint.text = point + "/" + availableStars[index].neededPoint;
+        if(canAdd)
+        {
+            game_panel.pointSlider.value = (float)point/(float) availableStars[index].neededPoint;
+            game_panel.starPoint.text = point + "/" + availableStars[index].neededPoint;
+        }
+        
    }
 
 
@@ -72,12 +69,22 @@ public class GameplayHandler : MonoBehaviour
    {
         if(point > availableStars[index].neededPoint)
         {
-            //level up effect?
 
             if(index + 1 < availableStars.Length)
             {
                 index += 1;
+                 if(pointText)
+                {
+                    GameObject prefab = Instantiate(pointText, touchPoint.transform);
+                    prefab.GetComponentInChildren<TextMesh>().text = "Level up!";
+                }  
                 game_panel.SetStar(availableStars[index]);
+            }
+
+            else
+            {
+                canAdd = false;
+                game_panel.starPoint.text = "MAX";
             }
           
         }
@@ -90,11 +97,21 @@ public class GameplayHandler : MonoBehaviour
 
    public void clickOnStar()
    {
-        point+=1;
-        checkStarLevel();
-        PlayerPrefs.SetInt(UserTotalPoint, point);
+        if(canAdd)
+        {
+            int add = UnityEngine.Random.Range(1, 3);
+            point+=add;
 
-         //add effect to show plus one when clicked
+            if(pointText)
+            {
+                GameObject prefab = Instantiate(pointText, touchPoint.transform);
+                prefab.GetComponentInChildren<TextMesh>().text = "+" + add;
+            }
+
+            checkStarLevel();
+            PlayerPrefs.SetInt(UserTotalPoint, point);
+        }
+        
        
    }
 
@@ -124,21 +141,32 @@ public class GameplayHandler : MonoBehaviour
                     }
                 }
 
-                SetUpGamePage(false);
+                string userPointKey = UserTotalPoint + PlayerPrefs.GetString(AppleUserIdKey);
+
+                PlayerPrefs.SetInt(userPointKey, point);
+                PlayerPrefs.DeleteKey(UserTotalPoint);
+                isGuest = false;
+                SetUpGamePage();
 
             },
             error =>
             {
                 var authorizationErrorCode = error.GetAuthorizationErrorCode();
                 Debug.Log("Sign In Failed " + authorizationErrorCode.ToString() + " " + error.ToString());
-                SetUpGamePage(true);
+                isGuest = true;
+                SetUpGamePage();
             });
     }
 
-   private void SetUpGamePage(bool isGuest)
+   private void SetUpGamePage()
    {
-        if(PlayerPrefs.HasKey(UserTotalPoint))
+
+        switch(isGuest)
         {
+            case true:
+
+            if(PlayerPrefs.HasKey(UserTotalPoint))
+            {
                 point = PlayerPrefs.GetInt(UserTotalPoint);
 
                 if(point <= 20)
@@ -158,34 +186,61 @@ public class GameplayHandler : MonoBehaviour
                 }
 
                 game_panel.SetStar(availableStars[index]);
-        }
+            }
 
-        else
-        {
+            else
+            {
                 index = 0;
                 game_panel.SetStar(availableStars[index]);
-        }
-
-        switch(isGuest)
-        {
-            case true:
+            }
 
             if(_authManager == null)
             {
                 game_panel.SetAppleLoginAvailability(false);
             }
 
-            else
+            else if(_authManager != null)
             {
                 game_panel.SetAppleLoginAvailability(true);
             }
 
             game_panel.SetPlayerName("Guest");
             game_panel.SetUpAppleID(false, string.Empty);
-            game_panel.SetAppleLoginAvailability(true);
             return;
 
             case false:
+
+            string userPointKey = UserTotalPoint + PlayerPrefs.GetString(AppleUserIdKey);
+
+             if(PlayerPrefs.HasKey(userPointKey))
+            {
+                point = PlayerPrefs.GetInt(userPointKey);
+
+                if(point <= 20)
+                {
+                    index = 0;
+                    
+                }
+
+                else if(point <= 50)
+                {
+                    index = 1;
+                }
+
+                else
+                {
+                    index = 2;
+                }
+
+                game_panel.SetStar(availableStars[index]);
+            }
+
+            else
+            {
+                index = 0;
+                game_panel.SetStar(availableStars[index]);
+            }
+
             if(PlayerPrefs.HasKey(UserNameKey))
             {
                 game_panel.SetPlayerName(PlayerPrefs.GetString(UserNameKey));

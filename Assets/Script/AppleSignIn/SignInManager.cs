@@ -150,17 +150,8 @@ public class SignInManager : MonoBehaviour
                 if(appleCredential != null)
                 {
                     PlayerPrefs.SetString(AppleUserIdKey, credential.User);
+                    PlayerPrefs.SetString(UserNameKey, "User");
 
-                    if(appleCredential.FullName != null)
-                    {
-                        var name = appleCredential.FullName.ToLocalizedString(PersonNameFormatterStyle.Short);
-                        PlayerPrefs.SetString(UserNameKey, name);
-                    }
-
-                    else
-                    {
-                        PlayerPrefs.SetString(UserNameKey, "User");
-                    }
                 }
 
                 SceneManager.LoadScene(1);
