@@ -166,7 +166,7 @@ public class SignInManager : MonoBehaviour
 
     private void AppleSignIn()
     {
-         var loginArgs = new AppleAuthLoginArgs(LoginOptions.IncludeEmail | LoginOptions.IncludeFullName);
+         var loginArgs = new AppleAuthLoginArgs(LoginOptions.IncludeFullName);
         
             _authManager.LoginWithAppleId(
             loginArgs,
